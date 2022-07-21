@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Data;
+using MySql.Data;
+using MySql.Data.MySqlClient;
+
 
 namespace Testing
 {
@@ -24,6 +28,14 @@ namespace Testing
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddScoped<IDbConnection>((s) =>
+            {
+              IDbConnection conn = new MySqlConnection(Configuration.GetConnectionString("bestbuy"));
+                conn.Open();
+                return conn;
+            });
+    
+services.AddTransient<IProductRepository, ProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,5 +65,6 @@ namespace Testing
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
     }
 }
